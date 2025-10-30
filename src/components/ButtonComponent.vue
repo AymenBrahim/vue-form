@@ -10,6 +10,7 @@ const { secondary, withTransition = true, small = false } = defineProps<ButtonPr
 
 <template>
   <button
+    role="button"
     :class="[secondary && 'secondary', withTransition && 'with-transition ', small && 'small']"
     v-bind="$attrs"
   >
@@ -49,6 +50,14 @@ button {
 }
 
 button:hover {
+  background: var(--color-accent);
+  color: var(--bg-primary);
+  border: 1px solid var(--color-accent);
+}
+
+button:is(:focus, :active) {
+  outline: 2px solid hsl(from var(--color-accent) h s 30%);
+  outline-offset: -1px;
   background: var(--color-accent);
   color: var(--bg-primary);
   border: 1px solid var(--color-accent);

@@ -15,9 +15,11 @@ const options = [
 ]
 </script>
 <template>
-  <ButtonComponent style="margin-left: auto" small @click="toggle">contact</ButtonComponent>
+  <ButtonComponent style="margin-left: auto" small @click="toggle" aria-label="contact"
+    >contact</ButtonComponent
+  >
   <div :class="['drawer', isExpanded && 'is-expanded']">
-    <ButtonComponent class="close" small @click="toggle">close</ButtonComponent>
+    <ButtonComponent class="close" small @click="toggle" aria-label="close">close</ButtonComponent>
     <form>
       <div class="form-container">
         <FormField
@@ -82,7 +84,9 @@ const options = [
             required
           /> -->
       </div>
-      <ButtonComponent style="position: relative" type="submit">submit</ButtonComponent>
+      <ButtonComponent style="position: relative" type="submit" aria-label="submit"
+        >submit</ButtonComponent
+      >
     </form>
   </div>
   <div class="backdrop"></div>

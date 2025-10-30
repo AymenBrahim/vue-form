@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import SelectField, { type SelectFieldProps } from '@/components/form/SelectField.vue'
-import { computed } from 'vue'
 import type { TextFieldProps } from './TextField.vue'
 import TextField from './TextField.vue'
 import MultiCheckField, { type MultiCheckFieldProps } from './MultiCheckField.vue'
@@ -54,8 +53,10 @@ const FieldComponent = fieldMap[props.type]
       :is="FieldComponent"
       v-bind="props"
       :placeholder="placeholder"
+      :id="name"
+      :aria-describedby="`${name}-error`"
     />
-    <div class="error">{{ error }}</div>
+    <p :id="`${name}-error`" class="error">{{ error }}</p>
   </div>
 </template>
 
@@ -90,6 +91,7 @@ label {
 
 .error {
   display: none;
+  margin: 0;
 }
 
 .input:has(:user-valid) {

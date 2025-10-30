@@ -1,19 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, useTemplateRef } from 'vue'
 import type { SharedInputProps } from './FormField.vue'
 
 export interface Option {
   label: string
   value: string
 }
-/*
-export type SelectFieldProps = {
-  name: string
-  modelValue: string | number | null
-  options: Option[]
-  placeholder?: string
-  required?: boolean
-} */
 
 export type SelectFieldProps = {
   type: 'select'
@@ -23,13 +15,19 @@ type Props = SharedInputProps & SelectFieldProps
 const props = defineProps<Props>()
 
 const isOpen = ref(false)
+const focusedIndex = ref(0)
+
 const selectedOption = ref({ value: '', label: '' })
 const toggleOpen = () => (isOpen.value = !isOpen.value)
 const close = () => (isOpen.value = false)
+const open = () => (isOpen.value = true)
+
 const select = (option: Option) => {
   selectedOption.value = option
   close()
 }
+
+const button = useTemplateRef('button')
 const onClickOutside = (e: MouseEvent) => {
   const target = e.target as HTMLElement
   if (!target.closest('.container')) close()
@@ -38,7 +36,33 @@ const onClickOutside = (e: MouseEvent) => {
 onMounted(() => document.addEventListener('click', onClickOutside))
 onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
 
-console.log(!!selectedOption?.value)
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (!isOpen.value) {
+    if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      open()
+    }
+    return
+  }
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault()
+    focusedIndex.value = (focusedIndex.value + 1) % props.options.length
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault()
+    focusedIndex.value =
+      focusedIndex.value === 0 ? props.options.length - 1 : focusedIndex.value - 1
+  } else if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault()
+    select(props.options[focusedIndex.value]!)
+    close()
+    button.value?.focus()
+  } else if (e.key === 'Escape') {
+    e.preventDefault()
+    close()
+    button.value?.focus()
+  }
+}
 </script>
 
 <template>
@@ -48,13 +72,15 @@ console.log(!!selectedOption?.value)
     :style="`--total-length:${props.options.length * 33.1}px;`"
     role="combobox"
   >
-    <!-- Trigger -->
     <button
+      ref="button"
       type="button"
       @click="toggleOpen"
-      role="button"
       :aria-expanded="isOpen"
       tabindex="0"
+      role="button"
+      aria-haspopup="listbox"
+      @keydown="handleKeyDown"
       :aria-owns="name + 'list'"
     >
       <span>{{
@@ -73,14 +99,25 @@ console.log(!!selectedOption?.value)
       </svg>
     </button>
     <transition name="fade">
-      <ul v-if="isOpen" :id="`${name}-listbox`" role="listbox">
+      <ul
+        v-if="isOpen"
+        :id="`${name}-listbox`"
+        role="listbox"
+        tabIndex="-1"
+        aria-activedescendant="{`option-${highlightedIndex}`}"
+        @keydown="handleKeyDown"
+      >
         <li
           v-for="option in options"
+          :id="`${props.name}-${option.value}`"
           :key="option.value"
-          :class="{ selected: option.value === selectedOption.value }"
+          :class="{
+            selected: option.value === selectedOption.value,
+            focused: option.value === props.options[focusedIndex]?.value,
+          }"
           @click="select(option)"
           role="option"
-          :aria-selected="false"
+          :aria-selected="option.value === selectedOption.value"
         >
           {{ option.label }}
         </li>
@@ -197,12 +234,18 @@ li:last-child {
 }
 
 li.selected,
-li:hover {
+li:hover,
+ul:not(:hover) li.focused {
   background: var(--color-cream);
   color: var(--bg-primary);
 }
 
-ul:has(li:not(.selected):hover) li.selected {
+ul:has(li:not(.selected):is(:hover, .focused)) li.selected {
+  background: var(--bg-primary);
+  color: var(--color-cream);
+}
+
+ul:has(li:not(.selected):is(:hover, .focused)) li.selected {
   background: var(--bg-primary);
   color: var(--color-cream);
 }

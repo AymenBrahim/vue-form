@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import type { SharedInputProps } from './FormField.vue'
 
 type Option = { label: string; value: string }
@@ -7,34 +7,41 @@ export type MultiCheckFieldProps = { options: Option[] }
 type Props = SharedInputProps & MultiCheckFieldProps
 
 const { options, required, name, id } = defineProps<Props>()
-// reactive boolean array, one per option
-const isChecked = ref<boolean[]>(Array.from({ length: options.length }, () => false))
+const isChecked = ref<number>(0)
 
-const onClick = (e: PointerEvent) => {
-  e.preventDefault()
-  e.stopPropagation()
-  e.stopImmediatePropagation()
-
-  const currentTarget = e.currentTarget as HTMLElement
-  const input = currentTarget.nextElementSibling as HTMLInputElement
-  const index = options.findIndex((v) => v.value === input.value)
-  console.log(isChecked.value.toString())
-  console.log(index)
-  if (index < 0) return
-  isChecked.value[index] = !isChecked.value[index]
-  input.click()
+function toggleInput(position: number) {
+  const checked = getInputIsChecked(position)
+  if (!checked) {
+    isChecked.value |= 1 << position // set bit
+  } else {
+    isChecked.value &= ~(1 << position) // clear bit
+  }
 }
 
-const isEmpty = computed(() => !isChecked.value.some((checked) => checked))
+function getInputIsChecked(position: number) {
+  return ((isChecked.value >> position) & 1) === 1
+}
 </script>
 
 <template>
   <fieldset :id class="multi-check">
-    <input tabindex="-1" v-if="required && isEmpty" required type="checkbox" class="required" />
+    <input
+      tabindex="-1"
+      v-if="required && isChecked === 0"
+      required
+      type="checkbox"
+      class="required"
+    />
 
-    <label v-for="option in options" :key="option.value">
-      <span @click="onClick($event)">{{ option.label }}</span>
-      <input :name :value="option.value" type="checkbox" />
+    <label v-for="(option, i) in options" :key="option.value">
+      <span>{{ option.label }}</span>
+      <input
+        :name
+        :value="option.value"
+        :checked="getInputIsChecked(i)"
+        @input="toggleInput(i)"
+        type="checkbox"
+      />
     </label>
   </fieldset>
 </template>
@@ -74,11 +81,14 @@ label:has(input:checked) {
 }
 
 label:has(input:is(:focus, :active)) {
-  outline: 1px solid var(--color-cream);
+  outline: 2px solid var(--color-cream);
+  outline-offset: -1px;
 }
 
 input {
+  all: unset;
   position: absolute;
-  left: -200vw;
+  width: 0;
+  height: 0;
 }
 </style>
