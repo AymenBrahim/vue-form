@@ -18,8 +18,9 @@ const options = [
   <ButtonComponent style="margin-left: auto" small @click="toggle" aria-label="contact"
     >contact</ButtonComponent
   >
-  <div :class="['drawer', isExpanded && 'is-expanded']">
+  <div :class="['drawer', isExpanded && 'is-expanded']" :tabindex="(isExpanded && -1) || undefined">
     <ButtonComponent class="close" small @click="toggle" aria-label="close">close</ButtonComponent>
+
     <form>
       <div class="form-container">
         <FormField
@@ -108,6 +109,7 @@ const options = [
   overflow: scroll;
   z-index: 9999;
   transition: all 0.5s ease-in;
+  visibility: hidden;
 }
 .close {
   position: fixed;
@@ -136,6 +138,8 @@ const options = [
 }
 
 .drawer.is-expanded {
+  visibility: visible;
+
   right: 0px;
   transform: scaleX(1);
 
