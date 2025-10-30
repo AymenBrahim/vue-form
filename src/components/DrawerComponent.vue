@@ -98,8 +98,7 @@ const options = [
   right: -100vw;
   top: 0;
   transform: scaleX(0);
-  min-height: 100vh;
-  height: 100%;
+  min-height: 100%;
   width: 50vw;
   min-width: min(100%, 400px);
 
@@ -109,7 +108,6 @@ const options = [
   overflow: scroll;
   z-index: 9999;
   transition: all 0.5s ease-in;
-  box-sizing: border-box;
 }
 .close {
   position: fixed;
@@ -165,10 +163,8 @@ const options = [
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .slide-enter-active,
-  .slide-leave-active,
-  .slide-enter-from,
-  .slide-leave-to {
+  .drawer.is-expanded,
+  .drawer {
     transition: none;
   }
 }

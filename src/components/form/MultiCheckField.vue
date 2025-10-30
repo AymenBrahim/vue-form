@@ -60,6 +60,7 @@ label {
   color: var(--color-cream);
 
   padding: 15px 16px;
+
   border: 1px solid var(--color-cream);
   border-radius: 24px;
 
@@ -83,6 +84,20 @@ label:has(input:checked) {
 label:has(input:is(:focus, :active)) {
   outline: 2px solid var(--color-cream);
   outline-offset: -1px;
+}
+
+label:has(input:is(:focus, :active):checked) {
+  outline-color: var(--color-accent);
+}
+
+.multi-check:has(input:user-invalid) label {
+  border-color: var(--color-red);
+  outline-color: var(--color-red);
+}
+
+.multi-check:has(input:user-invalid) label:hover {
+  border-color: var(--color-cream);
+  outline-color: var(--color-cream);
 }
 
 input {

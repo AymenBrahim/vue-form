@@ -4,6 +4,8 @@
 
 This project is a **Vue-based form interface** displayed inside a sliding drawer. The main goal was to explore how far one can go using **native HTML and CSS capabilities** — minimizing JavaScript usage while still achieving smooth user interactions and a solid component architecture.
 
+Live version: https://aymenbrahim.github.io/vue-form/
+
 ---
 
 ## 🎯 Objectives
@@ -78,6 +80,5 @@ npm run build
 
 ## 📋 To-Do
 
-- **Improve accessibility and keyboard support**
 - **Refine UI for responsiveness:**
 - **Add test for form validation**

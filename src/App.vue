@@ -5,7 +5,7 @@ import HeaderComponent from './components/HeaderComponent.vue'
 <template>
   <HeaderComponent />
   <main>
-    <div style="background-color: #fff; min-height: 100vh; width: 100vw"></div>
+    <div style="background-color: #fff; min-height: 100vh"></div>
   </main>
 </template>
 <style>

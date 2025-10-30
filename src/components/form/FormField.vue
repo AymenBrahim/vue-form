@@ -89,6 +89,14 @@ label {
   outline-offset: -1px;
 }
 
+.input:is(:focus, :active):is(:has(:user-invalid), :user-invalid) {
+  outline-color: var(--color-red);
+}
+
+.input:is(:focus, :active):is(:has(:user-valid), :user-valid) {
+  outline-color: var(--color-accent);
+}
+
 .error {
   display: none;
   margin: 0;
@@ -98,16 +106,15 @@ label {
   border-color: var(--color-accent);
 }
 
-.input:has(:user-invalid),
-.input:is(:user-invalid) {
-  border-color: var(--color-red);
-}
-
 .input:has(:user-valid),
 .input:is(:user-valid) {
   border-color: var(--color-accent);
 }
 
+.input:has(:user-invalid),
+.input:is(:user-invalid) {
+  border-color: var(--color-red);
+}
 :is(.input:has(:user-invalid), .input:is(:user-invalid)) + .error {
   position: absolute;
   bottom: 5.5px /* try to convert with calc considering font-size with rem */;
